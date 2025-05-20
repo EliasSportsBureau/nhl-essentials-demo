@@ -410,13 +410,19 @@ function handleRouteChange() {
     // Simple routing based on hash
     if (hash.startsWith('/NHL/team/')) {
         const teamCode = hash.split('/').pop();
-        // console.log('Displaying team page for:', teamCode); // Added for debugging
         mainContent.innerHTML = `<h1>${teamCode} Game Log</h1><div id="myGrid" class="ag-theme-balham" style="height: 80vh; width: 100%;"></div>`;
-        // For now, initializeGrid is hardcoded for TOR.
-        // Later, this would be initializeGridForTeam(teamCode);
         if (teamCode.toUpperCase() === 'TOR') {
-            // Delay initializeGrid to allow DOM to update after innerHTML change
-            setTimeout(initializeGrid, 0);
+            // Delay initializeGrid and ensure agGrid object is available
+            const attemptInitializeGrid = () => {
+                if (typeof agGrid !== 'undefined' && agGrid.createGrid) {
+                    initializeGrid();
+                } else {
+                    // If agGrid is not ready, try again shortly
+                    // console.log('AG Grid not ready yet, retrying...'); // For debugging
+                    setTimeout(attemptInitializeGrid, 100); // Retry after 100ms
+                }
+            };
+            setTimeout(attemptInitializeGrid, 0); // Initial attempt after DOM update
         } else {
             mainContent.innerHTML = `<h1>Game Log for ${teamCode} (Not Implemented Yet)</h1><p>Data for this team is not yet available.</p>`;
         }
