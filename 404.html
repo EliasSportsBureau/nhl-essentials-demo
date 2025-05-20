@@ -4,9 +4,29 @@
     <meta charset="utf-8">
     <title>Redirecting...</title>
     <script>
-      // Redirect to index.html with the original path as a hash
-      var newUrl = '/#' + location.pathname + location.search + location.hash;
-      location.replace(newUrl);
+      // Base path of the repository on GitHub Pages.
+      // For a URL like https://username.github.io/repo-name/, this is /repo-name
+      const repoBasePath = '/nhl-essentials-demo';
+
+      // Get the current path, e.g., /nhl-essentials-demo/NHL/team/TOR
+      let appSpecificPath = window.location.pathname;
+
+      // Remove the repoBasePath from the start to get the path for the hash
+      if (appSpecificPath.startsWith(repoBasePath)) {
+        appSpecificPath = appSpecificPath.substring(repoBasePath.length);
+      }
+
+      // Ensure the app-specific path for the hash starts with a slash (or is just / if empty)
+      appSpecificPath = appSpecificPath || '/'; // Default to root if original path was just repoBasePath
+      if (!appSpecificPath.startsWith('/')) {
+        appSpecificPath = '/' + appSpecificPath;
+      }
+
+      const newHash = '#' + appSpecificPath + window.location.search + window.location.hash;
+
+      // Redirect to the index.html of *this* repository (which is at repoBasePath),
+      // with the new hash. Using './' makes it relative to the current directory of 404.html.
+      window.location.replace('.' + newHash);
     </script>
   </head>
   <body>
