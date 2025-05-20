@@ -5,28 +5,37 @@
     <title>Redirecting...</title>
     <script>
       // Base path of the repository on GitHub Pages.
-      // For a URL like https://username.github.io/repo-name/, this is /repo-name
-      const repoBasePath = '/nhl-essentials-demo';
+      const repoBasePath = '/nhl-essentials-demo'; // Should be like '/RepoName' or empty if root user/org page
 
-      // Get the current path, e.g., /nhl-essentials-demo/NHL/team/TOR
-      let appSpecificPath = window.location.pathname;
+      // Get the full path, search, and hash from the URL that 404'd
+      let attemptedPath = window.location.pathname;
+      let attemptedSearch = window.location.search;
+      let attemptedHash = window.location.hash;
 
-      // Remove the repoBasePath from the start to get the path for the hash
-      if (appSpecificPath.startsWith(repoBasePath)) {
+      // Extract the part of the path that is specific to the SPA (i.e., after the repoBasePath)
+      let appSpecificPath = attemptedPath;
+      if (repoBasePath && appSpecificPath.startsWith(repoBasePath)) {
         appSpecificPath = appSpecificPath.substring(repoBasePath.length);
       }
 
-      // Ensure the app-specific path for the hash starts with a slash (or is just / if empty)
-      appSpecificPath = appSpecificPath || '/'; // Default to root if original path was just repoBasePath
-      if (!appSpecificPath.startsWith('/')) {
+      // Ensure appSpecificPath starts with a '/' if it's not empty, or is '/' if it was just the repo base
+      if (!appSpecificPath) {
+        appSpecificPath = '/';
+      } else if (!appSpecificPath.startsWith('/')) {
         appSpecificPath = '/' + appSpecificPath;
       }
+      
+      // Construct the new hash. Prepend any existing hash from the 404'd URL to the app-specific path.
+      const newHashForSpa = '#' + appSpecificPath + attemptedSearch + attemptedHash;
 
-      const newHash = '#' + appSpecificPath + window.location.search + window.location.hash;
+      // Construct the target URL for the SPA's index.html.
+      // This needs to be an absolute path from the domain root to the index.html of *this* gh-pages site,
+      // followed by the new hash.
+      const targetSpaUrl = repoBasePath + (repoBasePath.endsWith('/') || !repoBasePath ? '' : '/') + newHashForSpa;
+      // Example: /nhl-essentials-demo/#/NHL/team/TOR
 
-      // Redirect to the index.html of *this* repository (which is at repoBasePath),
-      // with the new hash. Using './' makes it relative to the current directory of 404.html.
-      window.location.replace('.' + newHash);
+      // Redirect to the SPA.
+      window.location.replace(targetSpaUrl);
     </script>
   </head>
   <body>
