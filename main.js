@@ -19,6 +19,7 @@ async function loadMultipleJSON(urls) {
 // Function to initialize the grid
 async function initializeGrid() {
     try {
+        // console.log('Initializing AG Grid...'); // Added for debugging
         // Load multiple JSON files and combine their data
         const jsonFiles = [
             'data/TOR_GameLog_2024_v3.json',
@@ -379,11 +380,95 @@ async function initializeGrid() {
         };
 
         const eDiv = document.querySelector("#myGrid");
-        const gridApi = agGrid.createGrid(eDiv, gridOptions);
+        // Ensure eDiv exists before creating grid. This is important because #myGrid is dynamically added.
+        if (eDiv) {
+            // console.log('Creating grid in #myGrid element.'); // Added for debugging
+            const gridApi = agGrid.createGrid(eDiv, gridOptions);
+        } else {
+            // console.error('#myGrid element not found. Grid cannot be created. Current main-content:', document.querySelector('.main-content').innerHTML); // Added for debugging
+        }
     } catch (error) {
         console.error('Error loading grid data:', error);
     }
 }
 
-// Initialize the grid when the page loads
-document.addEventListener('DOMContentLoaded', initializeGrid);
+// Store the original dashboard content
+let originalDashboardHTML = '';
+
+// Client-Side Router Logic
+function handleRouteChange() {
+    const hash = window.location.hash.substring(1); // Remove the '#'
+    const mainContent = document.querySelector('.main-content');
+
+    // console.log('Route changed to:', hash); // Added for debugging
+
+    if (!mainContent) {
+        console.error('.main-content element not found!');
+        return;
+    }
+
+    // Simple routing based on hash
+    if (hash.startsWith('/NHL/team/')) {
+        const teamCode = hash.split('/').pop();
+        // console.log('Displaying team page for:', teamCode); // Added for debugging
+        mainContent.innerHTML = `<h1>${teamCode} Game Log</h1><div id="myGrid" class="ag-theme-balham" style="height: 80vh; width: 100%;"></div>`;
+        // For now, initializeGrid is hardcoded for TOR.
+        // Later, this would be initializeGridForTeam(teamCode);
+        if (teamCode.toUpperCase() === 'TOR') {
+            initializeGrid();
+        } else {
+            mainContent.innerHTML = `<h1>Game Log for ${teamCode} (Not Implemented Yet)</h1><p>Data for this team is not yet available.</p>`;
+        }
+    } else if (hash === '/reports') {
+        // console.log('Displaying Reports page'); // Added for debugging
+        mainContent.innerHTML = '<h1>Reports</h1><p>This is the reports page. Content coming soon!</p>';
+    } else if (hash === '/finders') {
+        // console.log('Displaying Finders page'); // Added for debugging
+        mainContent.innerHTML = '<h1>Finders</h1><p>This is the finders page. Content coming soon!</p>';
+    } else if (hash === '/' || hash === '') {
+        // console.log('Displaying Home/Dashboard page'); // Added for debugging
+        // Restore original dashboard content
+        mainContent.innerHTML = originalDashboardHTML;
+        // Re-attach event listeners or re-initialize scripts if needed for the dashboard
+    } else {
+        // console.log('Displaying Page Not Found (within app)'); // Added for debugging
+        mainContent.innerHTML = `<h1>Page Not Found</h1><p>The path "${hash}" is not recognized within the application.</p>`;
+    }
+}
+
+// Initialize the router and convert links
+document.addEventListener('DOMContentLoaded', () => {
+    const mainContentDiv = document.querySelector('.main-content');
+    if (mainContentDiv) {
+        originalDashboardHTML = mainContentDiv.innerHTML; // Store the initial content of .main-content
+    } else {
+        console.error('Initial .main-content div not found for storing originalHTML!');
+    }
+
+    // Convert all internal links to use hash-based navigation
+    // Ensure this runs after originalDashboardHTML is stored, if links are part of it.
+    document.querySelectorAll('a').forEach(link => {
+        const href = link.getAttribute('href');
+        // Check if it's an internal link (starts with '/') and not already a hash link
+        if (href && href.startsWith('/') && !href.startsWith('#')) {
+            // Also check if it's not a link to an external site or a different type of resource
+            try {
+                const url = new URL(href, window.location.origin); // Check if it's a full URL
+                if (url.origin === window.location.origin) { // Only modify same-origin links
+                     link.setAttribute('href', '#' + href);
+                }
+            } catch (e) {
+                // If it's a relative path like "/reports", it's internal.
+                 link.setAttribute('href', '#' + href);
+            }
+        }
+    });
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleRouteChange);
+
+    // Handle initial page load (e.g., if there's a hash in the URL when the page first loads)
+    // Call handleRouteChange after a slight delay to ensure DOM is fully ready, especially #myGrid
+    // setTimeout(handleRouteChange, 0); // Call it to process the initial hash
+    handleRouteChange(); // Call it to process the initial hash. If #myGrid is needed, it's created by the router.
+});
