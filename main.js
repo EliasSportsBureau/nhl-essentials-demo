@@ -415,7 +415,8 @@ function handleRouteChange() {
         // For now, initializeGrid is hardcoded for TOR.
         // Later, this would be initializeGridForTeam(teamCode);
         if (teamCode.toUpperCase() === 'TOR') {
-            initializeGrid();
+            // Delay initializeGrid to allow DOM to update after innerHTML change
+            setTimeout(initializeGrid, 0);
         } else {
             mainContent.innerHTML = `<h1>Game Log for ${teamCode} (Not Implemented Yet)</h1><p>Data for this team is not yet available.</p>`;
         }
