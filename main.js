@@ -436,11 +436,37 @@ function handleRouteChange() {
         // console.log('Displaying Home/Dashboard page'); // Added for debugging
         // Restore original dashboard content
         mainContent.innerHTML = originalDashboardHTML;
-        // Re-attach event listeners or re-initialize scripts if needed for the dashboard
+        // Re-apply link conversion to the newly restored dashboard content
+        convertInternalLinksToHash();
     } else {
         // console.log('Displaying Page Not Found (within app)'); // Added for debugging
         mainContent.innerHTML = `<h1>Page Not Found</h1><p>The path "${hash}" is not recognized within the application.</p>`;
     }
+}
+
+// Function to convert internal page links to hash-based links
+function convertInternalLinksToHash() {
+    // console.log('Converting internal links to hash links...'); // Added for debugging
+    document.querySelectorAll('a').forEach(link => {
+        const href = link.getAttribute('href');
+        // Check if it's an internal link (starts with '/') and not already a hash link
+        // and not an anchor link within the same page (starts with '#' but not '#/')
+        if (href && href.startsWith('/') && !href.startsWith('#/')) {
+            // Also check if it's not a link to an external site or a different type of resource
+            try {
+                // Check if it's a full URL. If so, only modify same-origin links.
+                const url = new URL(href, window.location.origin); 
+                if (url.origin === window.location.origin) {
+                     link.setAttribute('href', '#' + href);
+                }
+            } catch (e) {
+                // If it's a relative path like "/reports" (and not e.g. "//example.com"), it's internal.
+                // The check href.startsWith('/') already handles this for simple paths.
+                // More complex relative paths might need more checks, but for now, this covers /path type links.
+                 link.setAttribute('href', '#' + href);
+            }
+        }
+    });
 }
 
 // Initialize the router and convert links
@@ -452,30 +478,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Initial .main-content div not found for storing originalHTML!');
     }
 
-    // Convert all internal links to use hash-based navigation
-    // Ensure this runs after originalDashboardHTML is stored, if links are part of it.
-    document.querySelectorAll('a').forEach(link => {
-        const href = link.getAttribute('href');
-        // Check if it's an internal link (starts with '/') and not already a hash link
-        if (href && href.startsWith('/') && !href.startsWith('#')) {
-            // Also check if it's not a link to an external site or a different type of resource
-            try {
-                const url = new URL(href, window.location.origin); // Check if it's a full URL
-                if (url.origin === window.location.origin) { // Only modify same-origin links
-                     link.setAttribute('href', '#' + href);
-                }
-            } catch (e) {
-                // If it's a relative path like "/reports", it's internal.
-                 link.setAttribute('href', '#' + href);
-            }
-        }
-    });
+    // Convert all internal links on initial load
+    convertInternalLinksToHash();
 
     // Listen for hash changes
     window.addEventListener('hashchange', handleRouteChange);
 
-    // Handle initial page load (e.g., if there's a hash in the URL when the page first loads)
-    // Call handleRouteChange after a slight delay to ensure DOM is fully ready, especially #myGrid
-    // setTimeout(handleRouteChange, 0); // Call it to process the initial hash
-    handleRouteChange(); // Call it to process the initial hash. If #myGrid is needed, it's created by the router.
+    // Handle initial page load
+    handleRouteChange();
 });
