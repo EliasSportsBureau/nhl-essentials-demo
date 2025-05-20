@@ -1,0 +1,102 @@
+<!-- Global Navigation -->
+<nav class="global-nav">
+    <div class="nav-left">
+        <a href="/" class="website-name">AccessElias</a>
+        <select class="league-selector">
+            <option value="NHL" selected>NHL</option>
+            <option value="NBA">NBA</option>
+            <option value="WNBA">WNBA</option>
+            <option value="NFL">NFL</option>
+        </select>
+        <div class="nav-items">
+            <a href="/" class="nav-item">Home</a>
+            <a href="/reports" class="nav-item">Reports</a>
+            <a href="/finders" class="nav-item">Finders</a>
+        </div>
+    </div>
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Search for players, teams, and coaches">
+    </div>
+    <div class="profile-dropdown">
+        <button class="profile-button">Hello, Stephanie</button>
+    </div>
+</nav>
+
+<style>
+    .global-nav {
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .website-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        text-decoration: none;
+    }
+
+    .league-selector {
+        padding: 0.5rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .nav-items {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .nav-item {
+        text-decoration: none;
+        color: #1a1a1a;
+        font-weight: 500;
+    }
+
+    .nav-item:hover {
+        color: #0066cc;
+    }
+
+    .search-container {
+        flex: 1;
+        max-width: 400px;
+        margin: 0 2rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .profile-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .profile-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        color: #1a1a1a;
+        padding: 0.5rem 1rem;
+    }
+
+    .profile-button:hover {
+        color: #0066cc;
+    }
+</style> 

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toronto Maple Leafs - Yearly Stats</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .main-content {
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Include Global Navigation -->
+    <div id="globalNav"></div>
+    
+    <!-- Include Team Navigation -->
+    <div id="teamNav"></div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1 class="h3 mb-4">Yearly Statistics</h1>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Team Statistics</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Season</th>
+                                    <th>GP</th>
+                                    <th>W</th>
+                                    <th>L</th>
+                                    <th>OTL</th>
+                                    <th>PTS</th>
+                                    <th>GF</th>
+                                    <th>GA</th>
+                                    <th>PP%</th>
+                                    <th>PK%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2023-24</td>
+                                    <td>82</td>
+                                    <td>46</td>
+                                    <td>26</td>
+                                    <td>10</td>
+                                    <td>102</td>
+                                    <td>303</td>
+                                    <td>263</td>
+                                    <td>24.0</td>
+                                    <td>79.8</td>
+                                </tr>
+                                <!-- Add more seasons here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">Player Statistics</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th>GP</th>
+                                    <th>G</th>
+                                    <th>A</th>
+                                    <th>PTS</th>
+                                    <th>+/-</th>
+                                    <th>PIM</th>
+                                    <th>PPG</th>
+                                    <th>SHG</th>
+                                    <th>GWG</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Auston Matthews</td>
+                                    <td>81</td>
+                                    <td>69</td>
+                                    <td>38</td>
+                                    <td>107</td>
+                                    <td>+31</td>
+                                    <td>20</td>
+                                    <td>20</td>
+                                    <td>0</td>
+                                    <td>12</td>
+                                </tr>
+                                <!-- Add more players here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load the global navigation
+        fetch('../../shared/global-nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('globalNav').innerHTML = data;
+            });
+
+        // Load the team navigation
+        fetch('../../shared/team-nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('teamNav').innerHTML = data;
+                // Set active nav item
+                const currentPath = window.location.pathname;
+                const navItems = document.querySelectorAll('.team-nav-item');
+                navItems.forEach(item => {
+                    if (item.getAttribute('href') === currentPath) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+    </script>
+</body>
+</html> 
