@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Google Fonts - Inter -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        
+        <!-- Core AG Grid CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise@33.2.4/styles/ag-grid.min.css">
+        <!-- Quartz theme CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise@33.2.4/styles/ag-theme-balham.min.css">
+        
+        <style>
+            body {
+                font-family: 'Inter', sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+
+            .global-nav {
+                background-color: #ffffff;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                padding: 1rem 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .nav-left {
+                display: flex;
+                align-items: center;
+                gap: 2rem;
+            }
+
+            .website-name {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #1a1a1a;
+                text-decoration: none;
+            }
+
+            .league-selector {
+                padding: 0.5rem;
+                border: 1px solid #e0e0e0;
+                border-radius: 4px;
+                font-family: 'Inter', sans-serif;
+            }
+
+            .nav-items {
+                display: flex;
+                gap: 1.5rem;
+            }
+
+            .nav-item {
+                text-decoration: none;
+                color: #1a1a1a;
+                font-weight: 500;
+            }
+
+            .nav-item:hover {
+                color: #0066cc;
+            }
+
+            .search-container {
+                flex: 1;
+                max-width: 400px;
+                margin: 0 2rem;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 0.5rem 1rem;
+                border: 1px solid #e0e0e0;
+                border-radius: 4px;
+                font-family: 'Inter', sans-serif;
+            }
+
+            .profile-dropdown {
+                position: relative;
+                display: inline-block;
+            }
+
+            .profile-button {
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-family: 'Inter', sans-serif;
+                font-weight: 500;
+                color: #1a1a1a;
+                padding: 0.5rem 1rem;
+            }
+
+            .profile-button:hover {
+                color: #0066cc;
+            }
+
+            .main-content {
+                width: calc(100% - 40px);
+                margin: 0 auto;
+                padding: 0;
+            }
+
+            h1 {
+                font-weight: 600;
+                color: #1a1a1a;
+                margin-top: 0;
+            }
+
+            .quick-links {
+                display: grid;
+                grid-template-columns: 1fr 1fr 2fr;
+                gap: 0px;
+                margin-top: 3rem;
+            }
+
+            .quick-link-card {
+                background: #fff;
+                border-radius: 8px;
+                padding: 1.5rem;
+                color: #1a1a1a;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .quick-link-card h2 {
+                margin: 0 0 1rem 0;
+                font-size: 1.5rem;
+            }
+
+            .quick-link-card p {
+                margin: 0 0 1rem 0;
+                color: #666;
+            }
+
+            .quick-link-card a {
+                color: #1a1a1a;
+                text-decoration: none;
+                font-weight: 500;
+                font-family: 'Inter', sans-serif;
+            }
+
+            .quick-link-card a:hover {
+                text-decoration: underline;
+            }
+
+            .quick-link-card table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .quick-link-card th,
+            .quick-link-card td {
+                padding: 0.5rem;
+                text-align: left;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .quick-link-card th {
+                font-weight: 600;
+                color: #666;
+            }
+
+            .game-time {
+                color: #666;
+                font-size: 0.85rem;
+            }
+
+            .schedule-preview {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+
+            .standings-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .standings-table th,
+            .standings-table td {
+                padding: 0.4rem;
+                text-align: left;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .standings-table th {
+                font-weight: 600;
+                color: #666;
+                white-space: nowrap;
+            }
+
+            .standings-table td {
+                white-space: nowrap;
+            }
+
+            .conference-header {
+                background-color: #f5f5f5;
+                font-weight: 400;
+                color: #333;
+                font-size: 1rem;
+            }
+
+            .division-header {
+                background-color: #f5f5f5;
+                font-weight: 400;
+                color: #333;
+            }
+
+            .playoff-spot {
+                font-weight: 400;
+            }
+
+            .report-link {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin: 2rem 0;
+            }
+
+            .report-link:last-child {
+                margin-bottom: 0;
+            }
+
+            .download-icon {
+                width: 24px;
+                height: 24px;
+                opacity: 0.6;
+            }
+
+            .report-links {
+                margin-bottom: 40px;
+            }
+
+            .game-matchup {
+                color: #1a1a1a;
+                text-decoration: none;
+                font-weight: 500;
+                font-family: 'Inter', sans-serif;
+            }
+
+            .game-matchup:hover {
+                text-decoration: underline;
+            }
+
+            .team-link {
+                color: #1a1a1a;
+                text-decoration: none;
+                font-weight: 500;
+                font-family: 'Inter', sans-serif;
+            }
+
+            .team-link:hover {
+                text-decoration: underline;
+            }
+
+            .division-row {
+                background-color: #f5f5f5;
+                font-weight: 400;
+            }
+
+            .conference-row {
+                background-color: #f5f5f5;
+                font-weight: 400;
+                font-size: 1rem;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="global-nav">
+            <div class="nav-left">
+                <a href="/" class="website-name">AccessElias</a>
+                <select class="league-selector">
+                    <option value="NHL" selected>NHL</option>
+                    <option value="NBA">NBA</option>
+                    <option value="WNBA">WNBA</option>
+                    <option value="NFL">NFL</option>
+                </select>
+                <div class="nav-items">
+                    <a href="/" class="nav-item">Home</a>
+                    <a href="/reports" class="nav-item">Reports</a>
+                    <a href="/finders" class="nav-item">Finders</a>
+                </div>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search for players, teams, and coaches">
+            </div>
+            <div class="profile-dropdown">
+                <button class="profile-button">Hello, Stephanie</button>
+            </div>
+        </nav>
+        <div class="main-content">
+            <div class="quick-links">
+                <div class="quick-link-card">
+                    <h2>NHL Leagues Reports</h2>
+                    <p>Last updated May 13, 2025</p>
+                    <div class="report-links">
+                        <a href="/NHL/reports/postseason" class="report-link">
+                            <svg class="download-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 16L12 8M12 16L8 12M12 16L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3 15V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Daily NHL reports from Elias Sports Bureau (Postseason)
+                        </a>
+                        <a href="/NHL/reports/regular-season" class="report-link">
+                            <svg class="download-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 16L12 8M12 16L8 12M12 16L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3 15V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Daily NHL reports from Elias Sports Bureau (Regular Season)
+                        </a>
+                    </div>
+                    <a href="/NHL/reports">Browse NHL League Reports →</a>
+                </div>
+                <div class="quick-link-card">
+                    <h2>NHL Schedule</h2>
+                    <p>2024-25 Season</p>
+                    <div class="schedule-preview">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Matchup</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Mar 19</td>
+                                    <td><a href="/NHL/game/TOR-BUF" class="game-matchup">TOR @ BUF</a></td>
+                                    <td class="game-time">7:00 PM ET</td>
+                                </tr>
+                                <tr>
+                                    <td>Mar 19</td>
+                                    <td><a href="/NHL/game/MTL-COL" class="game-matchup">MTL @ COL</a></td>
+                                    <td class="game-time">9:00 PM ET</td>
+                                </tr>
+                                <tr>
+                                    <td>Mar 20</td>
+                                    <td><a href="/NHL/game/NYR-BOS" class="game-matchup">NYR @ BOS</a></td>
+                                    <td class="game-time">7:00 PM ET</td>
+                                </tr>
+                                <tr>
+                                    <td>Mar 20</td>
+                                    <td><a href="/NHL/game/PIT-DET" class="game-matchup">PIT @ DET</a></td>
+                                    <td class="game-time">7:30 PM ET</td>
+                                </tr>
+                                <tr>
+                                    <td>Mar 21</td>
+                                    <td><a href="/NHL/game/EDM-WPG" class="game-matchup">EDM @ WPG</a></td>
+                                    <td class="game-time">8:00 PM ET</td>
+                                </tr>
+                                <tr>
+                                    <td>Mar 22</td>
+                                    <td><a href="/NHL/game/VAN-CGY" class="game-matchup">VAN @ CGY</a></td>
+                                    <td class="game-time">9:00 PM ET</td>
+                                </tr>
+                                <tr>
+                                    <td>Mar 23</td>
+                                    <td><a href="/NHL/game/TOR-MTL" class="game-matchup">TOR @ MTL</a></td>
+                                    <td class="game-time">7:00 PM ET</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="quick-link-card">
+                    <h2>NHL Standings</h2>
+                    <p>Through games played on April 17, 2025</p>
+                    <div class="standings-preview">
+                        <table class="standings-table">
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Team</th>
+                                    <th>GP</th>
+                                    <th>W</th>
+                                    <th>L</th>
+                                    <th>OT</th>
+                                    <th>PTS</th>
+                                    <th>HOME</th>
+                                    <th>ROAD</th>
+                                    <th>GF</th>
+                                    <th>GA</th>
+                                    <th>DIFF</th>
+                                    <th>L10</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="conference-header">
+                                    <td colspan="13">Eastern Conference</td>
+                                </tr>
+                                <tr class="division-header">
+                                    <td colspan="13">Atlantic Division</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td><a href="/NHL/team/TOR" class="team-link">Toronto</a></td>
+                                    <td>82</td>
+                                    <td>52</td>
+                                    <td>26</td>
+                                    <td>4</td>
+                                    <td>108</td>
+                                    <td>27-13-1</td>
+                                    <td>25-13-3</td>
+                                    <td>268</td>
+                                    <td>231</td>
+                                    <td>37</td>
+                                    <td>9-1-0</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><a href="/NHL/team/TBL" class="team-link">Tampa Bay</a></td>
+                                    <td>82</td>
+                                    <td>47</td>
+                                    <td>27</td>
+                                    <td>8</td>
+                                    <td>102</td>
+                                    <td>29-8-4</td>
+                                    <td>18-19-4</td>
+                                    <td>294</td>
+                                    <td>219</td>
+                                    <td>75</td>
+                                    <td>5-2-0</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><a href="/NHL/team/FLA" class="team-link">Florida</a></td>
+                                    <td>82</td>
+                                    <td>47</td>
+                                    <td>31</td>
+                                    <td>4</td>
+                                    <td>98</td>
+                                    <td>27-12-2</td>
+                                    <td>20-19-2</td>
+                                    <td>252</td>
+                                    <td>223</td>
+                                    <td>29</td>
+                                    <td>3-6-0</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td><a href="/NHL/team/OTT" class="team-link">Ottawa</a></td>
+                                    <td>82</td>
+                                    <td>45</td>
+                                    <td>30</td>
+                                    <td>7</td>
+                                    <td>97</td>
+                                    <td>27-11-3</td>
+                                    <td>18-19-4</td>
+                                    <td>243</td>
+                                    <td>234</td>
+                                    <td>9</td>
+                                    <td>6-2-0</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td><a href="/NHL/team/MTL" class="team-link">Montreal</a></td>
+                                    <td>82</td>
+                                    <td>40</td>
+                                    <td>31</td>
+                                    <td>11</td>
+                                    <td>91</td>
+                                    <td>23-12-6</td>
+                                    <td>17-19-5</td>
+                                    <td>245</td>
+                                    <td>265</td>
+                                    <td>-20</td>
+                                    <td>7-1-0</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td><a href="/NHL/team/DET" class="team-link">Detroit</a></td>
+                                    <td>82</td>
+                                    <td>39</td>
+                                    <td>35</td>
+                                    <td>8</td>
+                                    <td>86</td>
+                                    <td>22-16-3</td>
+                                    <td>17-19-5</td>
+                                    <td>238</td>
+                                    <td>259</td>
+                                    <td>-21</td>
+                                    <td>6-2-0</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td><a href="/NHL/team/BUF" class="team-link">Buffalo</a></td>
+                                    <td>82</td>
+                                    <td>36</td>
+                                    <td>39</td>
+                                    <td>7</td>
+                                    <td>79</td>
+                                    <td>23-15-3</td>
+                                    <td>13-24-4</td>
+                                    <td>269</td>
+                                    <td>289</td>
+                                    <td>-20</td>
+                                    <td>6-3-0</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td><a href="/NHL/team/BOS" class="team-link">Boston</a></td>
+                                    <td>82</td>
+                                    <td>33</td>
+                                    <td>39</td>
+                                    <td>10</td>
+                                    <td>76</td>
+                                    <td>20-14-7</td>
+                                    <td>13-25-3</td>
+                                    <td>222</td>
+                                    <td>272</td>
+                                    <td>-50</td>
+                                    <td>3-6-0</td>
+                                </tr>
+                                <tr class="conference-header">
+                                    <td colspan="13">Metropolitan Division</td>
+                                </tr>
+                                <tr class="division-header">
+                                    <td colspan="13">Atlantic Division</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td><a href="/NHL/team/WSH" class="team-link">Washington</a></td>
+                                    <td>82</td>
+                                    <td>51</td>
+                                    <td>22</td>
+                                    <td>9</td>
+                                    <td>111</td>
+                                    <td>26-9-6</td>
+                                    <td>25-13-3</td>
+                                    <td>288</td>
+                                    <td>232</td>
+                                    <td>56</td>
+                                    <td>4-6-0</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><a href="/NHL/team/CAR" class="team-link">Carolina</a></td>
+                                    <td>82</td>
+                                    <td>47</td>
+                                    <td>30</td>
+                                    <td>5</td>
+                                    <td>99</td>
+                                    <td>31-9-1</td>
+                                    <td>16-21-4</td>
+                                    <td>266</td>
+                                    <td>233</td>
+                                    <td>33</td>
+                                    <td>3-6-0</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><a href="/NHL/team/NJD" class="team-link">New Jersey</a></td>
+                                    <td>82</td>
+                                    <td>42</td>
+                                    <td>33</td>
+                                    <td>7</td>
+                                    <td>91</td>
+                                    <td>19-17-5</td>
+                                    <td>23-16-2</td>
+                                    <td>242</td>
+                                    <td>222</td>
+                                    <td>20</td>
+                                    <td>5-5-0</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td><a href="/NHL/team/CBJ" class="team-link">Columbus</a></td>
+                                    <td>82</td>
+                                    <td>40</td>
+                                    <td>33</td>
+                                    <td>9</td>
+                                    <td>89</td>
+                                    <td>26-10-5</td>
+                                    <td>14-23-4</td>
+                                    <td>273</td>
+                                    <td>268</td>
+                                    <td>5</td>
+                                    <td>7-3-0</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td><a href="/NHL/team/NYR" class="team-link">N.Y. Rangers</a></td>
+                                    <td>82</td>
+                                    <td>39</td>
+                                    <td>36</td>
+                                    <td>7</td>
+                                    <td>85</td>
+                                    <td>19-19-3</td>
+                                    <td>20-17-4</td>
+                                    <td>256</td>
+                                    <td>255</td>
+                                    <td>1</td>
+                                    <td>5-4-0</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td><a href="/NHL/team/NYI" class="team-link">N.Y. Islanders</a></td>
+                                    <td>82</td>
+                                    <td>35</td>
+                                    <td>35</td>
+                                    <td>12</td>
+                                    <td>82</td>
+                                    <td>19-17-5</td>
+                                    <td>16-18-7</td>
+                                    <td>224</td>
+                                    <td>260</td>
+                                    <td>-36</td>
+                                    <td>3-5-0</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td><a href="/NHL/team/PIT" class="team-link">Pittsburgh</a></td>
+                                    <td>82</td>
+                                    <td>34</td>
+                                    <td>36</td>
+                                    <td>12</td>
+                                    <td>80</td>
+                                    <td>21-15-5</td>
+                                    <td>13-21-7</td>
+                                    <td>243</td>
+                                    <td>293</td>
+                                    <td>-50</td>
+                                    <td>5-4-0</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td><a href="/NHL/team/PHI" class="team-link">Philadelphia</a></td>
+                                    <td>82</td>
+                                    <td>33</td>
+                                    <td>39</td>
+                                    <td>10</td>
+                                    <td>76</td>
+                                    <td>20-20-1</td>
+                                    <td>13-19-9</td>
+                                    <td>238</td>
+                                    <td>286</td>
+                                    <td>-48</td>
+                                    <td>5-4-0</td>
+                                </tr>
+                                <tr class="conference-header">
+                                    <td colspan="13">Western Conference</td>
+                                </tr>
+                                <tr class="division-header">
+                                    <td colspan="13">Central Division</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td><a href="/NHL/team/WPG" class="team-link">Winnipeg</a></td>
+                                    <td>82</td>
+                                    <td>56</td>
+                                    <td>22</td>
+                                    <td>4</td>
+                                    <td>116</td>
+                                    <td>30-7-4</td>
+                                    <td>26-15-0</td>
+                                    <td>277</td>
+                                    <td>191</td>
+                                    <td>86</td>
+                                    <td>7-3-0</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><a href="/NHL/team/DAL" class="team-link">Dallas</a></td>
+                                    <td>82</td>
+                                    <td>50</td>
+                                    <td>26</td>
+                                    <td>6</td>
+                                    <td>106</td>
+                                    <td>28-10-3</td>
+                                    <td>22-16-3</td>
+                                    <td>277</td>
+                                    <td>224</td>
+                                    <td>53</td>
+                                    <td>3-5-0</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><a href="/NHL/team/COL" class="team-link">Colorado</a></td>
+                                    <td>82</td>
+                                    <td>49</td>
+                                    <td>29</td>
+                                    <td>4</td>
+                                    <td>102</td>
+                                    <td>26-12-3</td>
+                                    <td>23-17-1</td>
+                                    <td>277</td>
+                                    <td>234</td>
+                                    <td>43</td>
+                                    <td>5-4-0</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td><a href="/NHL/team/MIN" class="team-link">Minnesota</a></td>
+                                    <td>82</td>
+                                    <td>45</td>
+                                    <td>30</td>
+                                    <td>7</td>
+                                    <td>97</td>
+                                    <td>22-17-2</td>
+                                    <td>23-13-5</td>
+                                    <td>228</td>
+                                    <td>239</td>
+                                    <td>-11</td>
+                                    <td>5-3-0</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td><a href="/NHL/team/STL" class="team-link">St. Louis</a></td>
+                                    <td>82</td>
+                                    <td>44</td>
+                                    <td>30</td>
+                                    <td>8</td>
+                                    <td>96</td>
+                                    <td>24-14-3</td>
+                                    <td>20-16-5</td>
+                                    <td>254</td>
+                                    <td>233</td>
+                                    <td>21</td>
+                                    <td>7-2-0</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td><a href="/NHL/team/UTA" class="team-link">Utah</a></td>
+                                    <td>82</td>
+                                    <td>38</td>
+                                    <td>31</td>
+                                    <td>13</td>
+                                    <td>89</td>
+                                    <td>18-15-8</td>
+                                    <td>20-16-5</td>
+                                    <td>241</td>
+                                    <td>251</td>
+                                    <td>-10</td>
+                                    <td>6-2-0</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td><a href="/NHL/team/NSH" class="team-link">Nashville</a></td>
+                                    <td>82</td>
+                                    <td>30</td>
+                                    <td>44</td>
+                                    <td>8</td>
+                                    <td>68</td>
+                                    <td>20-18-3</td>
+                                    <td>10-26-5</td>
+                                    <td>214</td>
+                                    <td>274</td>
+                                    <td>-60</td>
+                                    <td>3-7-0</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td><a href="/NHL/team/CHI" class="team-link">Chicago</a></td>
+                                    <td>82</td>
+                                    <td>25</td>
+                                    <td>46</td>
+                                    <td>11</td>
+                                    <td>61</td>
+                                    <td>15-20-6</td>
+                                    <td>10-26-5</td>
+                                    <td>226</td>
+                                    <td>296</td>
+                                    <td>-70</td>
+                                    <td>4-4-0</td>
+                                </tr>
+                                <tr class="conference-header">
+                                    <td colspan="13">Pacific Division</td>
+                                </tr>
+                                <tr class="division-header">
+                                    <td colspan="13">Atlantic Division</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td><a href="/NHL/team/VGK" class="team-link">Vegas</a></td>
+                                    <td>82</td>
+                                    <td>50</td>
+                                    <td>22</td>
+                                    <td>10</td>
+                                    <td>110</td>
+                                    <td>29-9-3</td>
+                                    <td>21-13-7</td>
+                                    <td>275</td>
+                                    <td>219</td>
+                                    <td>56</td>
+                                    <td>6-2-0</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><a href="/NHL/team/LAK" class="team-link">Los Angeles</a></td>
+                                    <td>82</td>
+                                    <td>48</td>
+                                    <td>25</td>
+                                    <td>9</td>
+                                    <td>105</td>
+                                    <td>31-6-4</td>
+                                    <td>17-19-5</td>
+                                    <td>250</td>
+                                    <td>206</td>
+                                    <td>44</td>
+                                    <td>8-2-0</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><a href="/NHL/team/EDM" class="team-link">Edmonton</a></td>
+                                    <td>82</td>
+                                    <td>48</td>
+                                    <td>29</td>
+                                    <td>5</td>
+                                    <td>101</td>
+                                    <td>25-13-3</td>
+                                    <td>23-16-2</td>
+                                    <td>259</td>
+                                    <td>236</td>
+                                    <td>23</td>
+                                    <td>7-3-0</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td><a href="/NHL/team/CGY" class="team-link">Calgary</a></td>
+                                    <td>82</td>
+                                    <td>41</td>
+                                    <td>27</td>
+                                    <td>14</td>
+                                    <td>96</td>
+                                    <td>23-12-6</td>
+                                    <td>18-15-8</td>
+                                    <td>225</td>
+                                    <td>238</td>
+                                    <td>-13</td>
+                                    <td>7-1-0</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td><a href="/NHL/team/VAN" class="team-link">Vancouver</a></td>
+                                    <td>82</td>
+                                    <td>38</td>
+                                    <td>30</td>
+                                    <td>14</td>
+                                    <td>90</td>
+                                    <td>17-16-8</td>
+                                    <td>21-14-6</td>
+                                    <td>236</td>
+                                    <td>253</td>
+                                    <td>-17</td>
+                                    <td>4-4-0</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td><a href="/NHL/team/ANA" class="team-link">Anaheim</a></td>
+                                    <td>82</td>
+                                    <td>35</td>
+                                    <td>37</td>
+                                    <td>10</td>
+                                    <td>80</td>
+                                    <td>21-18-2</td>
+                                    <td>14-19-8</td>
+                                    <td>221</td>
+                                    <td>263</td>
+                                    <td>-42</td>
+                                    <td>3-5-0</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td><a href="/NHL/team/SEA" class="team-link">Seattle</a></td>
+                                    <td>82</td>
+                                    <td>35</td>
+                                    <td>41</td>
+                                    <td>6</td>
+                                    <td>76</td>
+                                    <td>18-18-5</td>
+                                    <td>17-23-1</td>
+                                    <td>247</td>
+                                    <td>265</td>
+                                    <td>-18</td>
+                                    <td>5-5-0</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td><a href="/NHL/team/SJS" class="team-link">San Jose</a></td>
+                                    <td>82</td>
+                                    <td>20</td>
+                                    <td>50</td>
+                                    <td>12</td>
+                                    <td>52</td>
+                                    <td>12-27-2</td>
+                                    <td>8-23-10</td>
+                                    <td>210</td>
+                                    <td>315</td>
+                                    <td>-105</td>
+                                    <td>0-7-0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script src="main.js"></script>
+</html>
